@@ -11,7 +11,31 @@ import (
 var books = []models.Book{}
 
 func GetBooks(c *gin.Context) {
-	c.JSON(http.StatusOK, books)
+	categoryID, _ := strconv.Atoi(c.Query("category"))
+	page, _ := strconv.Atoi(c.Query("page"))
+	size := 5
+	if page < 1 {
+		page = 1
+	}
+
+	var filteredBooks []models.Book
+	for _, book := range books {
+		if categoryID == 0 || book.CategoryID == categoryID {
+			filteredBooks = append(filteredBooks, book)
+		}
+	}
+
+	start := (page - 1) * size
+	end := start + size
+	if start > len(filteredBooks) {
+		c.JSON(http.StatusOK, []models.Book{})
+		return
+	}
+	if end > len(filteredBooks) {
+		end = len(filteredBooks)
+	}
+
+	c.JSON(http.StatusOK, filteredBooks[start:end])
 }
 
 func GetBookByID(c *gin.Context) {
@@ -29,6 +53,10 @@ func AddBook(c *gin.Context) {
 	var newBook models.Book
 	if err := c.ShouldBindJSON(&newBook); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if newBook.Price <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Price must be greater than 0"})
 		return
 	}
 	newBook.ID = len(books) + 1
