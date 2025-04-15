@@ -16,13 +16,13 @@ func GetToys(c *gin.Context) {
 	limit := c.DefaultQuery("limit", "10")
 
 	pageInt, err := strconv.Atoi(page)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid page number"})
+	if err != nil || pageInt < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Бет нөмірі дұрыс емес"})
 		return
 	}
 	limitInt, err := strconv.Atoi(limit)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid limit"})
+	if err != nil || limitInt < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Limit дұрыс емес"})
 		return
 	}
 
@@ -34,7 +34,7 @@ func GetToys(c *gin.Context) {
 	}
 
 	if err := query.Offset(offset).Limit(limitInt).Find(&toys).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error retrieving toys"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Ойыншықтарды алу кезінде қате болды"})
 		return
 	}
 	c.JSON(http.StatusOK, toys)
@@ -74,4 +74,39 @@ func GetToyByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, toy)
+}
+func UpdateToy(c *gin.Context) {
+	id := c.Param("id")
+	var toy models.Toy
+	if err := database.DB.First(&toy, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "Ойыншық табылмады"})
+		return
+	}
+
+	var input models.Toy
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Қате формат"})
+		return
+	}
+
+	toy.Name = input.Name
+	toy.Description = input.Description
+	toy.Price = input.Price
+	toy.CategoryID = input.CategoryID
+
+	if err := database.DB.Save(&toy).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Жаңарту кезінде қате"})
+		return
+	}
+
+	c.JSON(http.StatusOK, toy)
+}
+
+func DeleteToy(c *gin.Context) {
+	id := c.Param("id")
+	if err := database.DB.Delete(&models.Toy{}, id).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Ойыншықты өшіруде қате болды"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Ойыншық өшірілді"})
 }
