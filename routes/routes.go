@@ -10,24 +10,37 @@ import (
 func RegisterRoutes(r *gin.Engine) {
 	api := r.Group("/api")
 	{
-
+		// Ашық маршруттар
 		api.POST("/register", controllers.Register)
 		api.POST("/login", controllers.Login)
 
+		// Қорғалған маршруттар
 		protected := api.Group("/")
 		protected.Use(middleware.JWTMiddleware())
 		{
+			protected.GET("/me", controllers.GetMe)
+
+			protected.GET("/users", controllers.GetUsers)
+			protected.GET("/users/:id", controllers.GetUserByID)
+			protected.PUT("/users/:id", controllers.UpdateUser)
+			protected.DELETE("/users/:id", controllers.DeleteUser)
+
+			// Toy endpoints
 			protected.GET("/toys", controllers.GetToys)
 			protected.GET("/toys/:id", controllers.GetToyByID)
 			protected.POST("/toys", controllers.CreateToy)
-			protected.DELETE("/toys/:id", controllers.DeleteToy)
 			protected.PUT("/toys/:id", controllers.UpdateToy)
+			protected.DELETE("/toys/:id", controllers.DeleteToy)
 
+			// Category endpoints
 			protected.GET("/categories", controllers.GetCategories)
+			protected.GET("/categories/:id", controllers.GetCategoryByID)
 			protected.POST("/categories", controllers.CreateCategory)
 			protected.PUT("/categories/:id", controllers.UpdateCategory)
 			protected.DELETE("/categories/:id", controllers.DeleteCategory)
-			protected.GET("/categories/:id", controllers.GetCategoryByID)
+
+			protected.GET("/toys/search", controllers.SearchToysByName)
+			protected.GET("/toys/featured", controllers.GetFeaturedToys)
 
 		}
 	}

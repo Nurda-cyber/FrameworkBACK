@@ -71,3 +71,20 @@ func GetCategoryByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, category)
 }
+func GetToysByCategory(c *gin.Context) {
+	categoryID := c.Param("id")
+
+	var category models.Category
+	if err := database.DB.First(&category, categoryID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "Category not found"})
+		return
+	}
+
+	var toys []models.Toy
+	if err := database.DB.Where("category_id = ?", categoryID).Find(&toys).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error retrieving toys by category"})
+		return
+	}
+
+	c.JSON(http.StatusOK, toys)
+}

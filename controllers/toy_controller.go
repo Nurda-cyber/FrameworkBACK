@@ -14,16 +14,29 @@ func GetToys(c *gin.Context) {
 	categoryID := c.DefaultQuery("category_id", "")
 	page := c.DefaultQuery("page", "1")
 	limit := c.DefaultQuery("limit", "10")
+	price := c.DefaultQuery("price", "")
 
+	// Параметрлерді тексеру
 	pageInt, err := strconv.Atoi(page)
 	if err != nil || pageInt < 1 {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Бет нөмірі дұрыс емес"})
 		return
 	}
+
 	limitInt, err := strconv.Atoi(limit)
 	if err != nil || limitInt < 1 {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Limit дұрыс емес"})
 		return
+	}
+
+	// Баға фильтрациясы
+	var priceFloat float64
+	if price != "" {
+		priceFloat, err = strconv.ParseFloat(price, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Бағаны дұрыс енгізіңіз"})
+			return
+		}
 	}
 
 	offset := (pageInt - 1) * limitInt
@@ -33,10 +46,17 @@ func GetToys(c *gin.Context) {
 		query = query.Where("category_id = ?", categoryID)
 	}
 
+	// Баға фильтрациясы тек баға параметріне негізделеді
+	if priceFloat > 0 {
+		query = query.Where("price <= ?", priceFloat)
+	}
+
+	// Ойыншықтарды сұрау
 	if err := query.Offset(offset).Limit(limitInt).Find(&toys).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Ойыншықтарды алу кезінде қате болды"})
 		return
 	}
+
 	c.JSON(http.StatusOK, toys)
 }
 
@@ -109,4 +129,30 @@ func DeleteToy(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Ойыншық өшірілді"})
+}
+
+func SearchToysByName(c *gin.Context) {
+	query := c.Query("name")
+	if query == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Атауды енгізіңіз"})
+		return
+	}
+
+	var toys []models.Toy
+	if err := database.DB.Where("name ILIKE ?", "%"+query+"%").Find(&toys).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Іздеу кезінде қате пайда болды"})
+		return
+	}
+
+	c.JSON(http.StatusOK, toys)
+}
+func GetFeaturedToys(c *gin.Context) {
+	var toys []models.Toy
+	// Мұнда логикамен танымал ойыншықтарды алу керек
+	if err := database.DB.Where("featured = ?", true).Find(&toys).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Ойыншықтарды алу кезінде қате болды"})
+		return
+	}
+
+	c.JSON(http.StatusOK, toys)
 }

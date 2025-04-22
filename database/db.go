@@ -1,7 +1,6 @@
 package database
 
 import (
-	"WelcomeGo/models"
 	"fmt"
 	"os"
 
@@ -29,15 +28,6 @@ func ConnectDB() {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("Failed to connect to database")
-	}
-
-	err = db.AutoMigrate(
-		&models.User{},
-		&models.Category{},
-		&models.Toy{},
-	)
-	if err != nil {
-		panic("Failed to auto migrate models")
 	}
 
 	DB = db
