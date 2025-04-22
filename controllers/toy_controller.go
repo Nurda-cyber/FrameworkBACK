@@ -16,7 +16,6 @@ func GetToys(c *gin.Context) {
 	limit := c.DefaultQuery("limit", "10")
 	price := c.DefaultQuery("price", "")
 
-	// Параметрлерді тексеру
 	pageInt, err := strconv.Atoi(page)
 	if err != nil || pageInt < 1 {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Бет нөмірі дұрыс емес"})
@@ -29,7 +28,6 @@ func GetToys(c *gin.Context) {
 		return
 	}
 
-	// Баға фильтрациясы
 	var priceFloat float64
 	if price != "" {
 		priceFloat, err = strconv.ParseFloat(price, 64)
@@ -46,12 +44,10 @@ func GetToys(c *gin.Context) {
 		query = query.Where("category_id = ?", categoryID)
 	}
 
-	// Баға фильтрациясы тек баға параметріне негізделеді
 	if priceFloat > 0 {
 		query = query.Where("price <= ?", priceFloat)
 	}
 
-	// Ойыншықтарды сұрау
 	if err := query.Offset(offset).Limit(limitInt).Find(&toys).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Ойыншықтарды алу кезінде қате болды"})
 		return
@@ -148,7 +144,7 @@ func SearchToysByName(c *gin.Context) {
 }
 func GetFeaturedToys(c *gin.Context) {
 	var toys []models.Toy
-	// Мұнда логикамен танымал ойыншықтарды алу керек
+
 	if err := database.DB.Where("featured = ?", true).Find(&toys).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Ойыншықтарды алу кезінде қате болды"})
 		return

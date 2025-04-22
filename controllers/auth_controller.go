@@ -79,7 +79,6 @@ func GetMe(c *gin.Context) {
 	})
 }
 
-// GetUsers retrieves all users from the database
 func GetUsers(c *gin.Context) {
 	var users []models.User
 	result := database.DB.Find(&users)
@@ -92,12 +91,10 @@ func GetUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
-// GetUserByID retrieves a user by their ID
 func GetUserByID(c *gin.Context) {
 	id := c.Param("id")
 	var user models.User
 
-	// Fetch the user with the given ID from the database
 	result := database.DB.First(&user, id)
 	if result.Error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
@@ -107,24 +104,20 @@ func GetUserByID(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// UpdateUser updates the user with the given ID
 func UpdateUser(c *gin.Context) {
 	id := c.Param("id")
 	var user models.User
 
-	// Fetch the user from the database
 	if err := database.DB.First(&user, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
 
-	// Bind the updated data from the request
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Update the user in the database
 	if err := database.DB.Save(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -133,17 +126,14 @@ func UpdateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// DeleteUser deletes a user by their ID
 func DeleteUser(c *gin.Context) {
 	id := c.Param("id")
 	var user models.User
 
-	// Check if the user exists
 	if err := database.DB.Delete(&user, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Return no content status for successful deletion
 	c.Status(http.StatusNoContent)
 }

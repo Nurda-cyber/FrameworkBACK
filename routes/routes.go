@@ -10,11 +10,10 @@ import (
 func RegisterRoutes(r *gin.Engine) {
 	api := r.Group("/api")
 	{
-		// Ашық маршруттар
+
 		api.POST("/register", controllers.Register)
 		api.POST("/login", controllers.Login)
 
-		// Қорғалған маршруттар
 		protected := api.Group("/")
 		protected.Use(middleware.JWTMiddleware())
 		{
@@ -25,14 +24,12 @@ func RegisterRoutes(r *gin.Engine) {
 			protected.PUT("/users/:id", controllers.UpdateUser)
 			protected.DELETE("/users/:id", controllers.DeleteUser)
 
-			// Toy endpoints
 			protected.GET("/toys", controllers.GetToys)
 			protected.GET("/toys/:id", controllers.GetToyByID)
 			protected.POST("/toys", controllers.CreateToy)
 			protected.PUT("/toys/:id", controllers.UpdateToy)
 			protected.DELETE("/toys/:id", controllers.DeleteToy)
 
-			// Category endpoints
 			protected.GET("/categories", controllers.GetCategories)
 			protected.GET("/categories/:id", controllers.GetCategoryByID)
 			protected.POST("/categories", controllers.CreateCategory)
