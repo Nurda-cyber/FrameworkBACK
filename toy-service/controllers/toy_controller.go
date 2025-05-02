@@ -1,10 +1,12 @@
 package controllers
 
 import (
-	"WelcomeGo/database"
-	"WelcomeGo/models"
+	"WelcomeGo/toy-service/database"
+	"WelcomeGo/toy-service/models"
 	"net/http"
 	"strconv"
+
+	"github.com/go-resty/resty/v2"
 
 	"github.com/gin-gonic/gin"
 )
@@ -151,4 +153,21 @@ func GetFeaturedToys(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, toys)
+}
+
+func GetToysFromToyService(c *gin.Context) {
+	token := c.GetHeader("Authorization") // JWT-токенді қайта қолдану
+
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", token).
+		SetResult([]map[string]interface{}{}). // автоматты JSON parse
+		Get("http://localhost:8082/toys")      // toy-service URL
+
+	if err != nil || resp.StatusCode() != http.StatusOK {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to fetch toys"})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp.Result())
 }

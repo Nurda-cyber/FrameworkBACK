@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"WelcomeGo/database"
-	"WelcomeGo/models"
+	"WelcomeGo/toy-service/database"
+	"WelcomeGo/toy-service/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

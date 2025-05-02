@@ -1,13 +1,14 @@
 package controllers
 
 import (
-	"WelcomeGo/database"
-	"WelcomeGo/models"
+	"WelcomeGo/user-service/database"
+	"WelcomeGo/user-service/models"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-resty/resty/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -136,4 +137,21 @@ func DeleteUser(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+func GetToysFromToyService(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", token).
+		SetResult([]map[string]interface{}{}).
+		Get("http://localhost:8082/toys")
+
+	if err != nil || resp.StatusCode() != http.StatusOK {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to fetch toys"})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp.Result())
 }
