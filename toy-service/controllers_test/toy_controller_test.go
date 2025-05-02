@@ -1,0 +1,137 @@
+package controllers_test
+
+import (
+	"WelcomeGo/toy-service/controllers"
+	"WelcomeGo/toy-service/database"
+	"bytes"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+)
+
+func init() {
+	database.ConnectDB()
+}
+
+func TestGetToys(t *testing.T) {
+	r := gin.Default()
+	r.GET("/toys", controllers.GetToys)
+
+	w := performRequest(r, "GET", "/toys")
+
+	assert.Equal(t, 200, w.Code)
+}
+
+func TestCreateToy(t *testing.T) {
+	r := gin.Default()
+	r.POST("/toys", controllers.CreateToy)
+
+	toy := map[string]interface{}{
+		"name":        "Math Puzzle",
+		"description": "A puzzle to improve math skills.",
+		"price":       20.0,
+		"category_id": 1,
+	}
+	jsonValue, _ := json.Marshal(toy)
+
+	w := performRequestWithJSON(r, "POST", "/toys", jsonValue)
+
+	assert.Equal(t, 201, w.Code)
+}
+
+func TestGetToyByID(t *testing.T) {
+	r := gin.Default()
+	r.GET("/toys/:id", controllers.GetToyByID)
+
+	w := performRequest(r, "GET", "/toys/1")
+	assert.Equal(t, 200, w.Code)
+}
+
+func TestUpdateToy(t *testing.T) {
+	r := gin.Default()
+	r.PUT("/toys/:id", controllers.UpdateToy)
+
+	update := map[string]interface{}{
+		"name":        "Updated Toy",
+		"description": "Updated description",
+		"price":       35.0,
+		"category_id": 1,
+	}
+	jsonValue, _ := json.Marshal(update)
+
+	w := performRequestWithJSON(r, "PUT", "/toys/1", jsonValue)
+
+	assert.Equal(t, 200, w.Code)
+}
+
+func TestDeleteToy(t *testing.T) {
+	r := gin.Default()
+	r.DELETE("/toys/:id", controllers.DeleteToy)
+
+	w := performRequest(r, "DELETE", "/toys/1")
+
+	assert.Equal(t, 200, w.Code)
+}
+
+func TestSearchToysByName(t *testing.T) {
+	r := gin.Default()
+	r.GET("/toys/search", controllers.SearchToysByName)
+
+	w := performRequest(r, "GET", "/toys/search?name=Puzzle")
+
+	assert.Equal(t, 200, w.Code)
+}
+
+func TestGetToysByCategoryAndPrice(t *testing.T) {
+	r := gin.Default()
+	r.GET("/toys", controllers.GetToys)
+
+	w := performRequest(r, "GET", "/toys?category_id=1&price=30")
+
+	assert.Equal(t, 200, w.Code)
+}
+
+func TestCreateToyInvalidPrice(t *testing.T) {
+	r := gin.Default()
+	r.POST("/toys", controllers.CreateToy)
+
+	toy := map[string]interface{}{
+		"name":        "Invalid Toy",
+		"description": "Invalid price test",
+		"price":       -10.0,
+		"category_id": 1,
+	}
+	jsonValue, _ := json.Marshal(toy)
+
+	w := performRequestWithJSON(r, "POST", "/toys", jsonValue)
+
+	assert.Equal(t, 400, w.Code)
+}
+
+func TestGetToysInvalidPage(t *testing.T) {
+	r := gin.Default()
+	r.GET("/toys", controllers.GetToys)
+
+	w := performRequest(r, "GET", "/toys?page=abc")
+
+	assert.Equal(t, 400, w.Code)
+}
+
+func performRequest(r http.Handler, method, path string) *httptest.ResponseRecorder {
+	req, _ := http.NewRequest(method, path, nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	return w
+}
+
+func performRequestWithJSON(r http.Handler, method, path string, jsonBody []byte) *httptest.ResponseRecorder {
+	req, _ := http.NewRequest(method, path, bytes.NewBuffer(jsonBody))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	return w
+}
