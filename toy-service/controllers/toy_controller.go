@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/go-resty/resty/v2"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -41,7 +39,8 @@ func GetToys(c *gin.Context) {
 
 	offset := (pageInt - 1) * limitInt
 
-	query := database.DB
+	query := database.DB.Preload("Category")
+
 	if categoryID != "" {
 		query = query.Where("category_id = ?", categoryID)
 	}
@@ -143,31 +142,4 @@ func SearchToysByName(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, toys)
-}
-func GetFeaturedToys(c *gin.Context) {
-	var toys []models.Toy
-
-	if err := database.DB.Where("featured = ?", true).Find(&toys).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Ойыншықтарды алу кезінде қате болды"})
-		return
-	}
-
-	c.JSON(http.StatusOK, toys)
-}
-
-func GetToysFromToyService(c *gin.Context) {
-	token := c.GetHeader("Authorization") // JWT-токенді қайта қолдану
-
-	client := resty.New()
-	resp, err := client.R().
-		SetHeader("Authorization", token).
-		SetResult([]map[string]interface{}{}). // автоматты JSON parse
-		Get("http://localhost:8082/toys")      // toy-service URL
-
-	if err != nil || resp.StatusCode() != http.StatusOK {
-		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to fetch toys"})
-		return
-	}
-
-	c.JSON(http.StatusOK, resp.Result())
 }

@@ -155,3 +155,200 @@ func GetToysFromToyService(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resp.Result())
 }
+func GetToys(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	client := resty.New()
+
+	queryParams := c.Request.URL.RawQuery
+	toyServiceURL := "http://localhost:8082/toys"
+	if queryParams != "" {
+		toyServiceURL += "?" + queryParams
+	}
+
+	resp, err := client.R().
+		SetHeader("Authorization", token).
+		SetHeader("Accept", "application/json").
+		Get(toyServiceURL)
+
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Ойыншықтарды алу сәтсіз аяқталды"})
+		return
+	}
+
+	c.Data(resp.StatusCode(), "application/json", resp.Body())
+}
+
+func GetToyByID(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	id := c.Param("id")
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", token).
+		SetResult(map[string]interface{}{}).
+		Get("http://localhost:8082/toys/" + id)
+
+	if err != nil || resp.StatusCode() != http.StatusOK {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to fetch toy"})
+		return
+	}
+	c.JSON(http.StatusOK, resp.Result())
+}
+
+func CreateToy(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	var toy map[string]interface{}
+	if err := c.BindJSON(&toy); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
+		return
+	}
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", token).
+		SetBody(toy).
+		Post("http://localhost:8082/toys")
+
+	if err != nil || resp.StatusCode() != http.StatusCreated {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to create toy"})
+		return
+	}
+	c.JSON(http.StatusCreated, resp.Result())
+}
+
+func UpdateToy(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	id := c.Param("id")
+	var toy map[string]interface{}
+	if err := c.BindJSON(&toy); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
+		return
+	}
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", token).
+		SetBody(toy).
+		Put("http://localhost:8082/toys/" + id)
+
+	if err != nil || resp.StatusCode() != http.StatusOK {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to update toy"})
+		return
+	}
+	c.JSON(http.StatusOK, resp.Result())
+}
+
+func DeleteToy(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	id := c.Param("id")
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", token).
+		Delete("http://localhost:8082/toys/" + id)
+
+	if err != nil || resp.StatusCode() != http.StatusOK {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to delete toy"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Toy deleted successfully"})
+}
+
+func GetCategories(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", token).
+		SetResult([]map[string]interface{}{}).
+		Get("http://localhost:8082/categories")
+
+	if err != nil || resp.StatusCode() != http.StatusOK {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to fetch categories"})
+		return
+	}
+	c.JSON(http.StatusOK, resp.Result())
+}
+
+func GetCategoryByID(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	id := c.Param("id")
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", token).
+		SetResult(map[string]interface{}{}).
+		Get("http://localhost:8082/categories/" + id)
+
+	if err != nil || resp.StatusCode() != http.StatusOK {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to fetch category"})
+		return
+	}
+	c.JSON(http.StatusOK, resp.Result())
+}
+
+func CreateCategory(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	var category map[string]interface{}
+	if err := c.BindJSON(&category); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
+		return
+	}
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", token).
+		SetBody(category).
+		Post("http://localhost:8082/categories")
+
+	if err != nil || resp.StatusCode() != http.StatusCreated {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to create category"})
+		return
+	}
+	c.JSON(http.StatusCreated, resp.Result())
+}
+
+func UpdateCategory(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	id := c.Param("id")
+	var category map[string]interface{}
+	if err := c.BindJSON(&category); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
+		return
+	}
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", token).
+		SetBody(category).
+		Put("http://localhost:8082/categories/" + id)
+
+	if err != nil || resp.StatusCode() != http.StatusOK {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to update category"})
+		return
+	}
+	c.JSON(http.StatusOK, resp.Result())
+}
+
+func DeleteCategory(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	id := c.Param("id")
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", token).
+		Delete("http://localhost:8082/categories/" + id)
+
+	if err != nil || resp.StatusCode() != http.StatusOK {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to delete category"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Category deleted successfully"})
+}
+
+func SearchToysByName(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	query := c.Query("name")
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", token).
+		SetResult([]map[string]interface{}{}).
+		Get("http://localhost:8082/toys/search?name=" + query)
+
+	if err != nil || resp.StatusCode() != http.StatusOK {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Search failed"})
+		return
+	}
+	c.JSON(http.StatusOK, resp.Result())
+}
