@@ -1,9 +1,9 @@
 package main
 
 import (
-	"WelcomeGo/user-service/controllers"
-	"WelcomeGo/user-service/database"
-	"WelcomeGo/user-service/middleware"
+	"user-service/controllers"
+	"user-service/database"
+	"user-service/middleware"
 
 	"github.com/gin-gonic/gin"
 )

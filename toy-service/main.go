@@ -1,9 +1,9 @@
 package main
 
 import (
-	"WelcomeGo/toy-service/controllers"
-	"WelcomeGo/toy-service/database"
-	"WelcomeGo/toy-service/middleware"
+	"toy-service/controllers"
+	"toy-service/database"
+	"toy-service/middleware"
 
 	"github.com/gin-gonic/gin"
 )

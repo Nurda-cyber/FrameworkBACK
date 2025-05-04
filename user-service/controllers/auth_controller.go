@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"WelcomeGo/user-service/database"
-	"WelcomeGo/user-service/models"
 	"net/http"
 	"os"
 	"time"
+	"user-service/database"
+	"user-service/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-resty/resty/v2"

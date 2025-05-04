@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"WelcomeGo/toy-service/database"
-	"WelcomeGo/toy-service/models"
 	"net/http"
 	"strconv"
+	"toy-service/database"
+	"toy-service/models"
 
 	"github.com/gin-gonic/gin"
 )

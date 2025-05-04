@@ -1,13 +1,13 @@
 package controllers_test
 
 import (
-	"WelcomeGo/toy-service/controllers"
-	"WelcomeGo/toy-service/database"
 	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"toy-service/controllers"
+	"toy-service/database"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
