@@ -1,10 +1,15 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
+	"log"
 	"os"
 
-	"github.com/joho/godotenv"
+	"github.com/golang-migrate/migrate/v4"
+	migratepg "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -12,11 +17,6 @@ import (
 var DB *gorm.DB
 
 func ConnectDB() {
-	err := godotenv.Load()
-	if err != nil {
-		panic("Could not load .env file")
-	}
-
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_USER"),
@@ -25,10 +25,32 @@ func ConnectDB() {
 		os.Getenv("DB_PORT"),
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	sqlDB, err := sql.Open("postgres", dsn)
 	if err != nil {
-		panic("Failed to connect to database")
+		log.Fatal(err)
 	}
 
-	DB = db
+	driver, err := migratepg.WithInstance(sqlDB, &migratepg.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	m, err := migrate.NewWithDatabaseInstance("file://db/migrations", "postgres", driver)
+	if err != nil {
+		fmt.Println("migration error:", err)
+		log.Fatal(err)
+	}
+	if err := m.Up(); err != nil && err.Error() != "no change" {
+		fmt.Println("migration up error:", err)
+		log.Fatal(err)
+	}
+
+	gormDB, err := gorm.Open(postgres.New(postgres.Config{
+		Conn: sqlDB,
+	}), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	DB = gormDB
+	log.Println("Connected to postgres database")
 }

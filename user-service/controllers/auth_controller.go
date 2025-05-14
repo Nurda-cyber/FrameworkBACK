@@ -160,7 +160,7 @@ func GetToys(c *gin.Context) {
 	client := resty.New()
 
 	queryParams := c.Request.URL.RawQuery
-	toyServiceURL := "http://localhost:8082/toys"
+	toyServiceURL := "http://toy-service:8082/toys"
 	if queryParams != "" {
 		toyServiceURL += "?" + queryParams
 	}
