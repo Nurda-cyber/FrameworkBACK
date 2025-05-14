@@ -31,10 +31,10 @@ func TestCreateToy(t *testing.T) {
 	r.POST("/toys", controllers.CreateToy)
 
 	toy := map[string]interface{}{
-		"name":        "Math Puzzle",
-		"description": "A puzzle to improve math skills.",
-		"price":       20.0,
-		"category_id": 1,
+		"name":        "Dino Puzzle",
+		"description": "A fun puzzle to improve logical thinking.",
+		"price":       25.0,
+		"category_id": 2,
 	}
 	jsonValue, _ := json.Marshal(toy)
 
@@ -47,7 +47,7 @@ func TestGetToyByID(t *testing.T) {
 	r := gin.Default()
 	r.GET("/toys/:id", controllers.GetToyByID)
 
-	w := performRequest(r, "GET", "/toys/1")
+	w := performRequest(r, "GET", "/toys/2")
 	assert.Equal(t, 200, w.Code)
 }
 
@@ -56,14 +56,14 @@ func TestUpdateToy(t *testing.T) {
 	r.PUT("/toys/:id", controllers.UpdateToy)
 
 	update := map[string]interface{}{
-		"name":        "Updated Toy",
-		"description": "Updated description",
-		"price":       35.0,
-		"category_id": 1,
+		"name":        "Updated Dino Puzzle",
+		"description": "A more challenging puzzle.",
+		"price":       40.0,
+		"category_id": 2,
 	}
 	jsonValue, _ := json.Marshal(update)
 
-	w := performRequestWithJSON(r, "PUT", "/toys/1", jsonValue)
+	w := performRequestWithJSON(r, "PUT", "/toys/2", jsonValue)
 
 	assert.Equal(t, 200, w.Code)
 }
@@ -72,7 +72,7 @@ func TestDeleteToy(t *testing.T) {
 	r := gin.Default()
 	r.DELETE("/toys/:id", controllers.DeleteToy)
 
-	w := performRequest(r, "DELETE", "/toys/1")
+	w := performRequest(r, "DELETE", "/toys/2")
 
 	assert.Equal(t, 200, w.Code)
 }
@@ -81,7 +81,7 @@ func TestSearchToysByName(t *testing.T) {
 	r := gin.Default()
 	r.GET("/toys/search", controllers.SearchToysByName)
 
-	w := performRequest(r, "GET", "/toys/search?name=Puzzle")
+	w := performRequest(r, "GET", "/toys/search?name=Dino")
 
 	assert.Equal(t, 200, w.Code)
 }
@@ -90,7 +90,7 @@ func TestGetToysByCategoryAndPrice(t *testing.T) {
 	r := gin.Default()
 	r.GET("/toys", controllers.GetToys)
 
-	w := performRequest(r, "GET", "/toys?category_id=1&price=30")
+	w := performRequest(r, "GET", "/toys?category_id=2&price=40")
 
 	assert.Equal(t, 200, w.Code)
 }
@@ -100,10 +100,10 @@ func TestCreateToyInvalidPrice(t *testing.T) {
 	r.POST("/toys", controllers.CreateToy)
 
 	toy := map[string]interface{}{
-		"name":        "Invalid Toy",
-		"description": "Invalid price test",
-		"price":       -10.0,
-		"category_id": 1,
+		"name":        "Faulty Toy",
+		"description": "Toy with invalid price.",
+		"price":       -15.0,
+		"category_id": 3,
 	}
 	jsonValue, _ := json.Marshal(toy)
 
@@ -116,7 +116,7 @@ func TestGetToysInvalidPage(t *testing.T) {
 	r := gin.Default()
 	r.GET("/toys", controllers.GetToys)
 
-	w := performRequest(r, "GET", "/toys?page=abc")
+	w := performRequest(r, "GET", "/toys?page=xyz")
 
 	assert.Equal(t, 400, w.Code)
 }
