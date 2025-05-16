@@ -146,7 +146,7 @@ func GetToysFromToyService(c *gin.Context) {
 	resp, err := client.R().
 		SetHeader("Authorization", token).
 		SetResult([]map[string]interface{}{}).
-		Get("http://localhost:8082/toys")
+		Get("http://toy-service:8082/toys")
 
 	if err != nil || resp.StatusCode() != http.StatusOK {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to fetch toys"})
@@ -185,7 +185,7 @@ func GetToyByID(c *gin.Context) {
 	resp, err := client.R().
 		SetHeader("Authorization", token).
 		SetResult(map[string]interface{}{}).
-		Get("http://localhost:8082/toys/" + id)
+		Get("http://toy-service:8082/toys/" + id)
 
 	if err != nil || resp.StatusCode() != http.StatusOK {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to fetch toy"})
@@ -205,7 +205,7 @@ func CreateToy(c *gin.Context) {
 	resp, err := client.R().
 		SetHeader("Authorization", token).
 		SetBody(toy).
-		Post("http://localhost:8082/toys")
+		Post("http://toy-service:8082/toys")
 
 	if err != nil || resp.StatusCode() != http.StatusCreated {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to create toy"})
@@ -226,7 +226,7 @@ func UpdateToy(c *gin.Context) {
 	resp, err := client.R().
 		SetHeader("Authorization", token).
 		SetBody(toy).
-		Put("http://localhost:8082/toys/" + id)
+		Put("http://toy-service:8082/toys/" + id)
 
 	if err != nil || resp.StatusCode() != http.StatusOK {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to update toy"})
@@ -241,7 +241,7 @@ func DeleteToy(c *gin.Context) {
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("Authorization", token).
-		Delete("http://localhost:8082/toys/" + id)
+		Delete("http://toy-service:8082/toys/" + id)
 
 	if err != nil || resp.StatusCode() != http.StatusOK {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to delete toy"})
@@ -256,7 +256,7 @@ func GetCategories(c *gin.Context) {
 	resp, err := client.R().
 		SetHeader("Authorization", token).
 		SetResult([]map[string]interface{}{}).
-		Get("http://localhost:8082/categories")
+		Get("http://toy-service:8082/categories")
 
 	if err != nil || resp.StatusCode() != http.StatusOK {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to fetch categories"})
@@ -272,7 +272,7 @@ func GetCategoryByID(c *gin.Context) {
 	resp, err := client.R().
 		SetHeader("Authorization", token).
 		SetResult(map[string]interface{}{}).
-		Get("http://localhost:8082/categories/" + id)
+		Get("http://toy-service:8082/categories/" + id)
 
 	if err != nil || resp.StatusCode() != http.StatusOK {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to fetch category"})
@@ -292,7 +292,7 @@ func CreateCategory(c *gin.Context) {
 	resp, err := client.R().
 		SetHeader("Authorization", token).
 		SetBody(category).
-		Post("http://localhost:8082/categories")
+		Post("http://toy-service:8082/categories")
 
 	if err != nil || resp.StatusCode() != http.StatusCreated {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to create category"})
@@ -313,7 +313,7 @@ func UpdateCategory(c *gin.Context) {
 	resp, err := client.R().
 		SetHeader("Authorization", token).
 		SetBody(category).
-		Put("http://localhost:8082/categories/" + id)
+		Put("http://toy-service:8082/categories/" + id)
 
 	if err != nil || resp.StatusCode() != http.StatusOK {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to update category"})
@@ -328,7 +328,7 @@ func DeleteCategory(c *gin.Context) {
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("Authorization", token).
-		Delete("http://localhost:8082/categories/" + id)
+		Delete("http://toy-service:8082/categories/" + id)
 
 	if err != nil || resp.StatusCode() != http.StatusOK {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to delete category"})
@@ -344,7 +344,7 @@ func SearchToysByName(c *gin.Context) {
 	resp, err := client.R().
 		SetHeader("Authorization", token).
 		SetResult([]map[string]interface{}{}).
-		Get("http://localhost:8082/toys/search?name=" + query)
+		Get("http://toy-service:8082/toys/search?name=" + query)
 
 	if err != nil || resp.StatusCode() != http.StatusOK {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "Search failed"})
