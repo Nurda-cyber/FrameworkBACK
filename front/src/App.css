@@ -1,0 +1,163 @@
+/* App.css */
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f6f8;
+  margin: 0;
+  padding: 0;
+}
+
+nav {
+  background-color: #007bff;
+  padding: 10px 20px;
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+nav a {
+  color: white;
+  margin-right: 15px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+nav a.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+button.logout-button {
+  margin-left: auto;
+  background-color: #dc3545;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button.logout-button:hover {
+  background-color: #c82333;
+}
+
+.container {
+  max-width: 600px;
+  margin: 30px auto;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.profile-info p {
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+.message {
+  color: red;
+  text-align: center;
+  margin-top: 20px;
+}
+/* Жалпы контейнер */
+.container {
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Профильдегі ақпарат */
+.profile-info p,
+.profile-info input {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+/* Батырмалар ортақ стильдері */
+button {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Жаңарту (Update) және Сақтау батырмалары */
+button:first-of-type {
+  background-color: #007bff;
+  color: white;
+}
+
+button:first-of-type:hover {
+  background-color: #0056b3;
+}
+
+/* Өшіру (Delete) батырмасы */
+button:nth-of-type(2) {
+  background-color: #dc3545;
+  color: white;
+}
+
+button:nth-of-type(2):hover {
+  background-color: #a71d2a;
+}
+
+/* Болдырмау (Cancel) батырмасы */
+button:last-of-type {
+  background-color: #6c757d;
+  color: white;
+  margin-left: 10px;
+}
+
+button:last-of-type:hover {
+  background-color: #565e64;
+}
+
+/* Toy List ішіндегі батырмалар */
+ul li button {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 3px;
+  margin-right: 8px;
+}
+
+ul li button:first-of-type {
+  background-color: #28a745; /* жасыл — edit */
+  color: white;
+}
+
+ul li button:first-of-type:hover {
+  background-color: #19692c;
+}
+
+ul li button:last-of-type {
+  background-color: #dc3545; /* қызыл — delete */
+  color: white;
+}
+
+ul li button:last-of-type:hover {
+  background-color: #a71d2a;
+}
+
+/* Хабарламалар */
+.message {
+  color: red;
+  text-align: center;
+  margin-top: 20px;
+  font-weight: 600;
+}
+

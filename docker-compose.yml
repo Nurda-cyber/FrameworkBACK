@@ -49,6 +49,16 @@ services:
       JWT_SECRET: your_secret_key_here
     volumes:
       - ./toy-service/db/migrations:/app/db/migrations
+  
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - user-service
+      - toy-service
 
 volumes:
   postgres_data:
